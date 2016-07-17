@@ -5,13 +5,13 @@ var del = require('del');
 var processhtml = require('gulp-processhtml');
 
 gulp.task('concat-css', function() {
-  return gulp.src(['./app/dep/ionic-v1.2.0/css/ionic.min.css', './app/css/app.css'])
+  return gulp.src(['./app/css/app.css'])
     .pipe(concat('app.min.css'))
     .pipe(gulp.dest('./dist/css/'));
 });
 
 gulp.task('concat-js', function() {
-  return gulp.src(['./app/dep/ionic-v1.2.0/js/ionic.bundle.min.js', './app/dep/ionic-v1.2.0/js/angular/angular-cookies.min.js', './app/js/app.js', './app/js/services.js', './app/js/controller.js', './app/js/filters.js'])
+  return gulp.src(['./app/js/app.js', './app/js/services.js', './app/js/controller.js', './app/js/filters.js'])
     .pipe(concat('app.min.js'))
     .pipe(gulp.dest('./app/concat/'));
 });
@@ -37,7 +37,9 @@ gulp.task('html-replace', function () {
 
 var filesToMove = [
         './app/partials/**/*.*',
-        './app/fonts/**'
+        './app/dep/ionic-v1.2.0/css/**.min.css',
+        './app/dep/ionic-v1.2.0/js/**',
+        './app/dep/ionic-v1.2.0/fonts/**'
     ];
 
 gulp.task('move',[], function(){
