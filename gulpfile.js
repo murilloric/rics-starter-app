@@ -1,11 +1,36 @@
 var gulp = require('gulp');
+var sass = require('gulp-sass');
 var concat = require('gulp-concat');
 var uglify = require('gulp-uglify');
+var minifyCss = require('gulp-minify-css');
 var del = require('del');
 var processhtml = require('gulp-processhtml');
 
+var paths = {
+  sass: ['./app/scss/**/*.scss']
+};
+
+
+
+gulp.task('sass', function(done) {
+  gulp.src('./app/scss/ionic.app.scss')
+    .pipe(sass())
+    .on('error', sass.logError)
+    .pipe(gulp.dest('./app/css/'))
+    .pipe(minifyCss({
+      keepSpecialComments: 0
+    }))
+    //.pipe(rename({ extname: '.min.css' }))
+    .pipe(gulp.dest('./app/css/'))
+    .on('end', done);
+});
+
+gulp.task('watch', function() {
+  gulp.watch(paths.sass, ['sass']);
+});
+
 gulp.task('concat-css', function() {
-  return gulp.src(['./app/css/app.css'])
+  return gulp.src(['./app/css/*'])
     .pipe(concat('app.min.css'))
     .pipe(gulp.dest('./dist/css/'));
 });
@@ -17,15 +42,15 @@ gulp.task('concat-js', function() {
 });
 
 gulp.task('min-js', ['concat-js'], function() {
-	return gulp.src('./app/concat/app.min.js')
+  return gulp.src('./app/concat/app.min.js')
     .pipe(uglify())
     .pipe(gulp.dest('./dist/js/'));
 });
 
 gulp.task('del-js', ['concat-js', 'min-js' , 'html-replace'], function() {
-	return del([
-    	'./app/concat',
-  	]);
+  return del([
+      './app/concat',
+    ]);
 });
 
 var opts = {}
@@ -37,9 +62,9 @@ gulp.task('html-replace', function () {
 
 var filesToMove = [
         './app/partials/**/*.*',
-        './app/dep/ionic-v1.2.0/css/**.min.css',
-        './app/dep/ionic-v1.2.0/js/**',
-        './app/dep/ionic-v1.2.0/fonts/**'
+        './app/lib/ionic/css/**.min.css',
+        './app/lib/ionic/js/**',
+        './app/lib/ionic/fonts/**'
     ];
 
 gulp.task('move',[], function(){
@@ -48,9 +73,9 @@ gulp.task('move',[], function(){
 });
 
 gulp.task('clean-dist',[], function(){
-	return del([
-    	'./dist/',
-  	]);
+  return del([
+      './dist/',
+    ]);
 });
 
 gulp.task('default', ['concat-css', 'concat-js', 'min-js', 'del-js' , 'html-replace', 'move']);
